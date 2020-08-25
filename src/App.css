@@ -73,7 +73,7 @@
 
 #conversation-titles{
   border: 0px solid;
-  font-size: .8rem;
+  font-size: 1.2rem;
   color: rgb(70, 68, 68);
   outline: none;
   background: white;
@@ -84,7 +84,7 @@
 
 #conversation-titles:focus{
   border: 1px blue solid;
-  font-size: .8rem;
+  font-size: 1.2rem;
   outline: blue;
   background: palegoldenrod;
   width: 90%;

@@ -17,33 +17,37 @@ class ConversationList extends React.Component {
         const bodyObject = JSON.stringify({
             "file": targetConversation,
             "newName": value})
+        
+        console.log(bodyObject);
 
         await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
             body: bodyObject,
-            method: 'put'
+            method: 'PUT'
             })
     }
 
+    // if user presses enter,
+    // proceed to change convo name
+    handleKeyPress(e){
+        if (e.charCode ===13){
+            e.preventDefault();
+            this.onInputChange(e)
+        }
+    }
+
     onInputChange(e) {
-
-    //    TRY TO DO ALL OF THIS BUT WITH A 
-    //    KEYUP === ENTER, INSTEAD OF
-    //    RENAMING AS YOU GO
-    
-        console.log(e)
-
         // shallow copy of conversations array
         let conversations = [...this.props.conversations];
 
         // filtering the copy, for the conversation
         // we're trying to edit
         let targetConversation = conversations.filter(c => c.id === e.target.placeholder);
+ 
+        e.target.placeholder = e.target.value;
 
-        e.target.placeholder = e.target.value; 
-        
         // firing the rename function, while our
         // data is freshly targeted
         this.backendRenamer(targetConversation, e.target.value);
@@ -51,18 +55,53 @@ class ConversationList extends React.Component {
         // setting our target conversation's id to
         // to the new name
         targetConversation[0].id = e.target.placeholder;
+
+        let sorted = conversations.sort()
+
         
         
         // updating the state, so that 
         // our renaming is reflected on the frontend
-        this.setState({conversations: conversations})
+        console.log("renamed conversations are: ", conversations)
+        return this.setState({conversations: sorted})
+    }
+
+    conversationDeleter(file){
+        // shallow copy of conversations...
+        // ...just in case
+        const newConversations = [...this.props.conversations];
+
+        // filtering the copy, for the conversation
+        // we're trying to delete
+        let targetConversation = newConversations.filter(c => c.id === file);
+
+        console.log(targetConversation, "is the target conversation" )
+
+        // checking if element is in
+        // conversations array
+        const index = newConversations.indexOf(targetConversation[0])
+
+        const result = this.props.conversations.splice(index,1)
+
+        console.log('the result is: ', result)
+        console.log('remaining conversations are: ', this.props.conversations)
+        
+        // using the index to splice
+        // our conversation array
+        return this.setState({conversations: 
+            this.props.conversations})
     }
 
     async onClick(e) {
 
         if (e.target.id ==="delete"){
-            const fileName = e.target.parentElement.parentElement.firstChild.firstChild.placeholder;
+            const fileName = e.target.parentElement.parentElement.firstChild.firstChild[0].placeholder;
+            
             const bodyObject = JSON.stringify({"file": fileName})
+
+            // reflect deletion in frontend
+            this.conversationDeleter(fileName)
+
             await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
@@ -72,6 +111,7 @@ class ConversationList extends React.Component {
             })
             
           }
+
         else if (e.target.id === "new"){
 
             const fileName = "NewConversation" + Date.now()
@@ -86,7 +126,8 @@ class ConversationList extends React.Component {
             body: bodyObject,
             method: 'POST'
             })
-            
+
+           
         } 
     
         else console.log('star')
@@ -112,18 +153,15 @@ class ConversationList extends React.Component {
                         className = "row conv-list-row"
                         key = {`${i}`}>
                         <div className = "column conv-title-column">
-                            <input
-                            id = "conversation-titles"
-                            maxlength = "13"
-                            placeholder = {`${conversation.id}`}
-                            type = "text" 
-                            handleKeyPress = {(e) =>{
-                                if(e.key === 'Enter'){
-                                    
-                                    this.onInputChange(e)
-                                }
-                            }} 
-                            ></input>
+                            <form onSubmit = {this.handleSubmit}>
+                                <input
+                                id = "conversation-titles"
+                                maxLength = "30"
+                                placeholder = {`${conversation.id}`}
+                                type = "textarea" 
+                                onKeyPress = {(e) => this.handleKeyPress(e)}
+                                ></input>
+                            </form>
                         </div>
                         <div className = "column conv-buttons-column">
                             <img

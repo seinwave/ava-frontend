@@ -6,14 +6,14 @@ import './App.css';
 import {BrowserRouter as Router} from 'react-router-dom'
 
 class App extends React.Component {
-  constructor(props) {
-    super(props);
+  constructor() {
+    super();
     this.state = {
-        conversations: []
+        conversations: [],
     }
   }
 
-  async componentDidMount(){
+  async getConversations(){
     try {
       const res = await axios.get('http://localhost:4000/conversations')
       res.data.forEach(i => {
@@ -25,24 +25,14 @@ class App extends React.Component {
     }
   }
 
-  async onClick(e) {
-    if (e.target.id ==="delete"){
-      const fileName = e.target.parentElement.parentElement.firstChild.textContent;
-      const bodyObject = JSON.stringify({"file": fileName})
-      await fetch('http://localhost:4000/conversations', {
-        headers: { 'Accept': 'application/json',
-        "Content-Type": 'application/json',
-        "Access-Control-Allow-Origin": "*"},
-        body: bodyObject,
-        method: 'DELETE'
-      })
-      .then(response => console.log(response));
-      }
-    else if (e.target.id === "new"){
-      console.log(e.target.id)
-    }
-    else console.log('star')
-}
+  componentDidMount(){
+    this.getConversations();
+  }
+
+  componentDidUpdate(){
+  }
+
+
 
   render(){
     return (
@@ -50,8 +40,9 @@ class App extends React.Component {
         <header className="App-header">
           <h1>The Collabatron</h1>
               <ConversationList 
-              conversations = {this.state.conversations}
-              onClick = {this.onClick}/>
+              {...this.state}
+              onClick = {this.onClick}
+              getConversations = {this.getConversations}/>
         </header>
       </div>
     );

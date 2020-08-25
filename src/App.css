@@ -31,12 +31,23 @@
   margin-bottom: 1rem;
 }
 
+.conv-buttons-column{
+  display: flex;
+  flex-direction: column;
+}
+
 .star-button{
-  background-color: yellow;
+  background-color: none;
+  border: none;
+  height: 2rem;
+  margin-bottom: 1rem;
 }
 
 .delete-button{
-  background-color: red;
+  background-color: rgb(246, 111, 111);
+  height: 2rem;
+  color: white;
+  font-size: 1rem;
 }
 
 .conv-container{
@@ -53,9 +64,32 @@
   padding: .5rem;
 }
 
-.conv-label-column{
+.conv-title-column{
   margin-right: 2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
 }
+
+#conversation-titles{
+  border: 0px solid;
+  font-size: .8rem;
+  color: rgb(70, 68, 68);
+  outline: none;
+  background: white;
+  height: 3rem;
+  width: 90%;
+  padding: .5rem;
+}
+
+#conversation-titles:focus{
+  border: 1px blue solid;
+  font-size: .8rem;
+  outline: blue;
+  background: palegoldenrod;
+  width: 90%;
+}
+
 
 .conv-border{
   border-bottom: 2px solid lightgrey;

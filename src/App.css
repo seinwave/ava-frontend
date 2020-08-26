@@ -29,6 +29,7 @@
   height: 2rem;
   width: 4rem;
   margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 .conv-buttons-column{
@@ -48,13 +49,32 @@
   height: 2rem;
   color: white;
   font-size: 1rem;
+  cursor: pointer;
 }
 
 .conv-container{
-  background: white;
   width: 70%;
   height: auto;
   color: gray;
+}
+
+.conv-column{
+  background:white;
+}
+
+.conv-input-ops-row{
+  display: flex;
+  justify-content: flex-start;
+}
+
+.home-button{
+  color: white;
+  font-size: 1rem;
+  background-color: purple;
+  height: 2rem;
+  width: auto;
+  margin-bottom: 1rem;
+  cursor: pointer;
 }
 
 .conv-label-row{
@@ -113,6 +133,12 @@
 .conv-operations-row{
   text-align: right;
   padding-right: .5rem;
+}
+
+.conv-last-mutation-column{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
 }
 
 .App {

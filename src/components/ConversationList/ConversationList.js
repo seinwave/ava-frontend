@@ -1,5 +1,4 @@
 import React from 'react';
-import axios from 'axios/index';
 
 
 
@@ -14,19 +13,21 @@ class ConversationList extends React.Component {
     // renaming conversations on the backend
     async backendRenamer(targetConversation, value){
 
+
         const bodyObject = JSON.stringify({
             "file": targetConversation,
             "newName": value})
         
         console.log(bodyObject);
 
-        await fetch('http://localhost:4000/conversations', {
+        return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
             body: bodyObject,
             method: 'PUT'
             })
+
     }
 
     // if user presses enter,
@@ -34,38 +35,43 @@ class ConversationList extends React.Component {
     handleKeyPress(e){
         if (e.charCode ===13){
             e.preventDefault();
-            this.onInputChange(e)
+            this.frontendRenamer(e)
         }
     }
 
-    onInputChange(e) {
+    // changing the convo name
+    // on the frontend
+    frontendRenamer(e) {
+
+        // IF NO USER INPUT
+        // --> BREAK
+        if (e.target.value === ''){
+            return console.log('no input')
+        }
+
         // shallow copy of conversations array
         let conversations = [...this.props.conversations];
 
         // filtering the copy, for the conversation
         // we're trying to edit
         let targetConversation = conversations.filter(c => c.id === e.target.placeholder);
- 
+
         e.target.placeholder = e.target.value;
 
         // firing the rename function, while our
         // data is freshly targeted
         this.backendRenamer(targetConversation, e.target.value);
 
+
         // setting our target conversation's id to
         // to the new name
         targetConversation[0].id = e.target.placeholder;
+        return e.target.value = '';
 
-        let sorted = conversations.sort()
-
-        
-        
-        // updating the state, so that 
-        // our renaming is reflected on the frontend
-        console.log("renamed conversations are: ", conversations)
-        return this.setState({conversations: sorted})
     }
 
+
+    // delete conversations from frontend
     conversationDeleter(file){
         // shallow copy of conversations...
         // ...just in case
@@ -75,34 +81,55 @@ class ConversationList extends React.Component {
         // we're trying to delete
         let targetConversation = newConversations.filter(c => c.id === file);
 
-        console.log(targetConversation, "is the target conversation" )
-
         // checking if element is in
         // conversations array
         const index = newConversations.indexOf(targetConversation[0])
 
-        const result = this.props.conversations.splice(index,1)
+        // mutating the array with a splice
+        this.props.conversations.splice(index,1)
 
-        console.log('the result is: ', result)
-        console.log('remaining conversations are: ', this.props.conversations)
         
         // using the index to splice
         // our conversation array
-        return this.setState({conversations: 
+        this.setState({conversations: 
             this.props.conversations})
+
     }
 
-    async onClick(e) {
+     // toggles starred status
+    starToggler(conversation){
+        // filtering the copy, for the conversation
+        // we're trying to star
+        let targetConversation = this.props.conversations.filter(c => c.id === conversation);
 
+        if (targetConversation[0].star){
+            targetConversation[0].star = !targetConversation[0].star;
+        }
+        else {
+            targetConversation[0].star = true;
+        }
+        return this.setState({conversations: this.props.conversations})
+    }
+
+    // prevents clicks from
+    // bubbling up to rowClick event;
+    clickStopper(e){
+        e.stopPropagation();
+    }
+
+    async buttonClick(e) {
+
+        e.stopPropagation();
+    
         if (e.target.id ==="delete"){
             const fileName = e.target.parentElement.parentElement.firstChild.firstChild[0].placeholder;
             
             const bodyObject = JSON.stringify({"file": fileName})
-
+    
             // reflect deletion in frontend
             this.conversationDeleter(fileName)
-
-            await fetch('http://localhost:4000/conversations', {
+    
+            return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
@@ -111,68 +138,89 @@ class ConversationList extends React.Component {
             })
             
           }
-
+    
         else if (e.target.id === "new"){
-
+    
             const fileName = "NewConversation" + Date.now()
             console.log(fileName)
             this.setState({conversations: this.props.conversations.push({"id":fileName})})
             
             const bodyObject = JSON.stringify({"file": fileName})
-            await fetch('http://localhost:4000/conversations', {
+            return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
             body: bodyObject,
             method: 'POST'
             })
-
-           
         } 
     
-        else console.log('star')
+        else {
+            const conversationName = e.target.parentElement.parentElement.firstChild.firstChild[0].placeholder;
+            return this.starToggler(conversationName);
+        }
     }
+
+    rowClick(e){
+        
+        const conversation = e.target.firstChild.firstChild.firstChild.placeholder
+
+        return this.props.onRouteChange(conversation)
+        
+    }
+
+
 
     render() {
 
         let conversations = this.props.conversations;
+        let star = ""
 
         return (
             <div className = "container conv-list-container">
                 <div className = "row conv-list-ops-row">
                     <div className = "column conv-list-ops-column">
                         <button 
-                        onClick = {(e) => {this.onClick(e)}}
+                        onClick = {(e) => {this.buttonClick(e)}}
                         id = "new"
                         className = "new-button">New+</button>
                     </div>
                 </div>
                 <div className = "column conv-list-column">
                     {conversations.map((conversation,i) => {
+                        if (conversation.star === true){
+                            star = "star-filled.svg";
+                        }
+                        else {
+                            star = "star.svg";
+                        }
                         return <div 
                         className = "row conv-list-row"
-                        key = {`${i}`}>
+                        key = {`${i}`}
+                        onClick = {(e) => this.rowClick(e)}>
                         <div className = "column conv-title-column">
                             <form onSubmit = {this.handleSubmit}>
                                 <input
                                 id = "conversation-titles"
                                 maxLength = "30"
                                 placeholder = {`${conversation.id}`}
-                                type = "textarea" 
+                                type = "textarea"
+                                onClick = {(e) => {this.clickStopper(e)}}
+                                onBlur = {(e) => {this.frontendRenamer(e)}} 
                                 onKeyPress = {(e) => this.handleKeyPress(e)}
                                 ></input>
                             </form>
                         </div>
                         <div className = "column conv-buttons-column">
                             <img
-                            onClick = {(e) => {this.onClick(e)}}
+                            onClick = {(e) => {this.buttonClick(e)}}
                             alt = "star"
-                            src = "./assets/star.svg"
+                            src = {`./assets/${star}`}
                             id = "star"
-                            className = "star-button" />
+                            className = "star-button"/>
                             <button 
                             id = "delete"
-                            onClick = {(e) => {this.onClick(e)}}
+                            onClick = {(e) => {this.buttonClick(e)}}
                             className = "delete-button">Delete</button>
                         </div>
                     </div>

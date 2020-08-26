@@ -10,6 +10,7 @@ class App extends React.Component {
     super();
     this.state = {
         conversations: [],
+        route: 'home'
     }
   }
 
@@ -25,6 +26,17 @@ class App extends React.Component {
     }
   }
 
+
+  onRouteChange = (conversation) =>{
+
+    // got route change figured out 
+    // now to link to conversations
+    console.log(this.state.route)
+    
+    return this.setState({route: conversation});
+    
+  }
+
   componentDidMount(){
     this.getConversations();
   }
@@ -33,16 +45,23 @@ class App extends React.Component {
   }
 
 
-
   render(){
+
+    const { route } = this.state; 
     return (
       <div className="App">
         <header className="App-header">
           <h1>The Collabatron</h1>
+          { route === 'home' ?
               <ConversationList 
               {...this.state}
-              onClick = {this.onClick}
-              getConversations = {this.getConversations}/>
+              buttonClick = {this.buttonClick}
+              onRouteChange = {this.onRouteChange}
+              getConversations = {this.getConversations}/> :
+              <Conversation 
+              {...this.state}
+              buttonClick = {this.buttonClick}
+              onRouteChange = {this.onRouteChange}/>}
         </header>
       </div>
     );

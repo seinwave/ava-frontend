@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/ava-frontend/static/css/main.c6b91a21.chunk.css",
+    "main.js": "/ava-frontend/static/js/main.8a1d1df3.chunk.js",
+    "main.js.map": "/ava-frontend/static/js/main.8a1d1df3.chunk.js.map",
+    "runtime-main.js": "/ava-frontend/static/js/runtime-main.63244ce7.js",
+    "runtime-main.js.map": "/ava-frontend/static/js/runtime-main.63244ce7.js.map",
+    "static/js/2.349b55e2.chunk.js": "/ava-frontend/static/js/2.349b55e2.chunk.js",
+    "static/js/2.349b55e2.chunk.js.map": "/ava-frontend/static/js/2.349b55e2.chunk.js.map",
+    "index.html": "/ava-frontend/index.html",
+    "precache-manifest.ed3f6b89acfb12a91900fd06b3c54b42.js": "/ava-frontend/precache-manifest.ed3f6b89acfb12a91900fd06b3c54b42.js",
+    "service-worker.js": "/ava-frontend/service-worker.js",
+    "static/css/main.c6b91a21.chunk.css.map": "/ava-frontend/static/css/main.c6b91a21.chunk.css.map",
+    "static/js/2.349b55e2.chunk.js.LICENSE.txt": "/ava-frontend/static/js/2.349b55e2.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.63244ce7.js",
+    "static/js/2.349b55e2.chunk.js",
+    "static/css/main.c6b91a21.chunk.css",
+    "static/js/main.8a1d1df3.chunk.js"
+  ]
+}

@@ -1,10 +1,10 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "58e5d2adede510f68c7b47606fadf51b",
+    "revision": "919b26c324162d5e5a3d5717fcd7af47",
     "url": "/ava-frontend/index.html"
   },
   {
-    "revision": "e2f09c9c5447f2ef6df3",
+    "revision": "33abd59298bff47d0f82",
     "url": "/ava-frontend/static/css/main.c6b91a21.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/ava-frontend/static/js/2.349b55e2.chunk.js.LICENSE.txt"
   },
   {
-    "revision": "e2f09c9c5447f2ef6df3",
-    "url": "/ava-frontend/static/js/main.36615f55.chunk.js"
+    "revision": "33abd59298bff47d0f82",
+    "url": "/ava-frontend/static/js/main.eee7f6b4.chunk.js"
   },
   {
     "revision": "de22582e03beb433850e",

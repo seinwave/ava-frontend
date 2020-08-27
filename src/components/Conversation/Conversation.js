@@ -12,7 +12,7 @@ class Conversation extends React.Component {
     
     async textEntered(text) {
         try {
-            const res = await axios.get('http://localhost:4000') 
+            const res = await axios.get('https://ava-backend.herokuapp.com/info') 
             return console.log(res.data.author)
         }   
         catch (e) {

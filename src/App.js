@@ -15,7 +15,7 @@ class App extends React.Component {
 
   async getConversations(){
     try {
-      const res = await axios.get('http://localhost:4000/conversations')
+      const res = await axios.get('https://ava-backend.herokuapp.com/conversations')
       res.data.forEach(i => {
         return this.setState({conversations: this.state.conversations.concat(i) })
       })

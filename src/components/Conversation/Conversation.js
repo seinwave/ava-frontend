@@ -12,7 +12,7 @@ class Conversation extends React.Component {
     
     async textEntered(text) {
         try {
-            const res = await axios.get('https://ava-backend.herokuapp.com/info') 
+            const res = await axios.get('http://localhost:4000') 
             return console.log(res.data.author)
         }   
         catch (e) {
@@ -91,7 +91,8 @@ class Conversation extends React.Component {
                         <textarea 
                         onKeyPress = {this.handleInput}
                         className = "conv-input" 
-                        placeholder = 'start typing...'>
+                        placeholder = 'start typing...'
+                        defaultValue ={`${currentConversation[0].content}`}>
                         </textarea>
                     </div>
                     

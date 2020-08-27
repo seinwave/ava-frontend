@@ -20,7 +20,7 @@ class ConversationList extends React.Component {
         
         console.log(bodyObject);
 
-        return await fetch('https://ava-backend.herokuapp.com/conversations', {
+        return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
@@ -129,7 +129,7 @@ class ConversationList extends React.Component {
             // reflect deletion in frontend
             this.conversationDeleter(fileName)
     
-            return await fetch('https://ava-backend.herokuapp.com/conversations', {
+            return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
@@ -146,7 +146,7 @@ class ConversationList extends React.Component {
             this.setState({conversations: this.props.conversations.push({"id":fileName})})
             
             const bodyObject = JSON.stringify({"file": fileName})
-            return await fetch('https://ava-backend.herokuapp.com/conversations', {
+            return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},

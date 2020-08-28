@@ -9,13 +9,18 @@ class App extends React.Component {
     super();
     this.state = {
         conversations: [],
-        route: 'home'
+        route: 'home',
+        lastMutation: []
     }
   }
 
+  intervalID;
+
   async getConversations(){
+    this.setState({conversations: [],
+    lastMutation: []});
     try {
-      const res = await axios.get('https://ava-backend.herokuapp.com/conversations')
+      const res = await axios.get('http://localhost:4000/conversations')
       res.data.forEach(i => {
         return this.setState({conversations: this.state.conversations.concat(i) })
       })
@@ -28,19 +33,25 @@ class App extends React.Component {
 
   onRouteChange = (conversation) =>{
 
-    // got route change figured out 
-    // now to link to conversations
-    console.log(this.state.route)
-    
-    return this.setState({route: conversation});
-    
+    // necessary reloading — to populate
+    // frontend conversations with
+    // any changes we've made
+    if (conversation === 'home'){
+    this.handleUpdate();
+    }
+       
+    return this.setState({route: conversation}); 
   }
+
 
   componentDidMount(){
     this.getConversations();
+    
   }
 
-  componentDidUpdate(){
+
+  handleUpdate(){
+    this.getConversations();
   }
 
 
@@ -60,7 +71,8 @@ class App extends React.Component {
               <Conversation 
               {...this.state}
               buttonClick = {this.buttonClick}
-              onRouteChange = {this.onRouteChange}/>}
+              onRouteChange = {this.onRouteChange}
+              opHandler = {this.opHandler} />}
         </header>
       </div>
     );

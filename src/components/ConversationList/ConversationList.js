@@ -12,22 +12,16 @@ class ConversationList extends React.Component {
 
     // renaming conversations on the backend
     async backendRenamer(targetConversation, value){
-
-
         const bodyObject = JSON.stringify({
             "file": targetConversation,
             "newName": value})
-        
-        console.log(bodyObject);
-
-        return await fetch('https://ava-backend.herokuapp.com/conversations', {
+        return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
             body: bodyObject,
             method: 'PUT'
             })
-
     }
 
     // if user presses enter,
@@ -42,16 +36,14 @@ class ConversationList extends React.Component {
     // changing the convo name
     // on the frontend
     frontendRenamer(e) {
-
         // IF NO USER INPUT
         // --> BREAK
         if (e.target.value === ''){
             return console.log('no input')
         }
-
         // shallow copy of conversations array
         let conversations = [...this.props.conversations];
-
+        
         // filtering the copy, for the conversation
         // we're trying to edit
         let targetConversation = conversations.filter(c => c.id === e.target.placeholder);
@@ -129,7 +121,7 @@ class ConversationList extends React.Component {
             // reflect deletion in frontend
             this.conversationDeleter(fileName)
     
-            return await fetch('https://ava-backend.herokuapp.com/conversations', {
+            return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
@@ -146,7 +138,7 @@ class ConversationList extends React.Component {
             this.setState({conversations: this.props.conversations.push({"id":fileName})})
             
             const bodyObject = JSON.stringify({"file": fileName})
-            return await fetch('https://ava-backend.herokuapp.com/conversations', {
+            return await fetch('http://localhost:4000/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
@@ -211,7 +203,8 @@ class ConversationList extends React.Component {
                                 ></input>
                             </form>
                         </div>
-                        <div className = "column conv-buttons-column">
+                        <div className = "column conv-buttons-column"
+                        onClick = {(e) => {this.clickStopper(e)}}>
                             <img
                             onClick = {(e) => {this.buttonClick(e)}}
                             alt = "star"

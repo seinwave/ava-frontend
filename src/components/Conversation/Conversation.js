@@ -7,7 +7,7 @@ import connection from '../Connection/Connection'
 // If needed, create a new Doc instance
 // for shareDB to communicate with
 function createIfNeeded(doc, callback){
-    if(doc.type === null){
+    if(!doc){
       doc.create('', callback);
     } else {
       callback();
@@ -61,6 +61,9 @@ class Conversation extends React.Component {
         const collection = 'textPads';
         const doc = connection.get(collection, this.props.route);
 
+        let targetConversation = this.props.conversations.filter(c => c.id === this.props.route);
+        doc.data = targetConversation[0].content;
+
         // Getting operation details
         doc.on('op', (op) => {
             return this.opHandler(op);
@@ -76,8 +79,8 @@ class Conversation extends React.Component {
             binding.setup();
         });
         this.doc = doc;
-        let targetConversation = this.props.conversations.filter(c => c.id === this.props.route);
-        doc.data = targetConversation[0].content;
+        
+        
     }
 
     starToggler(conversation){

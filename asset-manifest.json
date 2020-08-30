@@ -1,14 +1,14 @@
 {
   "files": {
     "main.css": "/ava-frontend/static/css/main.af385a91.chunk.css",
-    "main.js": "/ava-frontend/static/js/main.95afb9a5.chunk.js",
-    "main.js.map": "/ava-frontend/static/js/main.95afb9a5.chunk.js.map",
+    "main.js": "/ava-frontend/static/js/main.e997f498.chunk.js",
+    "main.js.map": "/ava-frontend/static/js/main.e997f498.chunk.js.map",
     "runtime-main.js": "/ava-frontend/static/js/runtime-main.63244ce7.js",
     "runtime-main.js.map": "/ava-frontend/static/js/runtime-main.63244ce7.js.map",
     "static/js/2.97e2dac3.chunk.js": "/ava-frontend/static/js/2.97e2dac3.chunk.js",
     "static/js/2.97e2dac3.chunk.js.map": "/ava-frontend/static/js/2.97e2dac3.chunk.js.map",
     "index.html": "/ava-frontend/index.html",
-    "precache-manifest.129123b69d041f14bd6a6f8f120c0a2e.js": "/ava-frontend/precache-manifest.129123b69d041f14bd6a6f8f120c0a2e.js",
+    "precache-manifest.de9a63b05202a77cf26739898d358080.js": "/ava-frontend/precache-manifest.de9a63b05202a77cf26739898d358080.js",
     "service-worker.js": "/ava-frontend/service-worker.js",
     "static/css/main.af385a91.chunk.css.map": "/ava-frontend/static/css/main.af385a91.chunk.css.map",
     "static/js/2.97e2dac3.chunk.js.LICENSE.txt": "/ava-frontend/static/js/2.97e2dac3.chunk.js.LICENSE.txt"
@@ -17,6 +17,6 @@
     "static/js/runtime-main.63244ce7.js",
     "static/js/2.97e2dac3.chunk.js",
     "static/css/main.af385a91.chunk.css",
-    "static/js/main.95afb9a5.chunk.js"
+    "static/js/main.e997f498.chunk.js"
   ]
 }

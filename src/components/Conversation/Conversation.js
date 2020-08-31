@@ -7,10 +7,8 @@ import connection from '../Connection/Connection'
 // for shareDB to communicate with
 function createIfNeeded(doc, data, callback){
     if(doc.type === null){
-        console.log('File does not exist. Creating a blank.')
         return doc.create('', callback);
     } else {
-        console.log('File exists. Populating with:', data)
         callback();
     }
 }
@@ -70,12 +68,6 @@ class Conversation extends React.Component {
         // to the current conversation
         const collection = 'textPads';
         const doc = connection.get(collection, `${this.props.route}.json`);
-
-        console.log('DOC:', doc);
-
-        connection.fetchSnapshot(collection, `${this.props.route}.json`, (err, snapshot) =>{
-            console.log('SNAPSHOT:', snapshot)
-        })
 
         // Getting operation details
         doc.on('op', (op) => {

@@ -57,8 +57,7 @@ class ConversationList extends React.Component {
         targetConversation[0].id = e.target.placeholder;
         // setting our target conversation's id to
         // to the new name
-        // think this may be causing a bug
-        //targetConversation[0].id = e.target.placeholder;
+        
         return e.target.value = '';
 
     }

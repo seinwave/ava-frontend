@@ -52,11 +52,9 @@ class App extends React.Component {
     let localStar = localStorage.getItem(`${targetConversation[0].id}-star`)
 
     if (localStar === "star-filled.svg"){
-       console.log('false')
         starStatus = "star.svg";
     }
     else {
-        console.log('true')
         starStatus = "star-filled.svg";
     }
     localStorage.setItem(`${targetConversation[0].id}-star`, `${starStatus}`);

@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/ava-frontend/precache-manifest.1a657db3e7677cae64a43e596dede761.js"
+  "/ava-frontend/precache-manifest.c105d9cd808f6ad82ad400663bd9ba0b.js"
 );
 
 self.addEventListener('message', (event) => {

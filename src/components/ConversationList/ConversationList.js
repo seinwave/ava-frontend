@@ -15,7 +15,7 @@ class ConversationList extends React.Component {
         const bodyObject = JSON.stringify({
             "file": targetConversation,
             "newName": value})
-        return await fetch('http://localhost:4000/conversations', {
+        return await fetch('https://ava-backend.herokuapp.com/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
@@ -54,10 +54,11 @@ class ConversationList extends React.Component {
         // data is freshly targeted
         this.backendRenamer(targetConversation, e.target.value);
 
-
+        targetConversation[0].id = e.target.placeholder;
         // setting our target conversation's id to
         // to the new name
-        targetConversation[0].id = e.target.placeholder;
+        // think this may be causing a bug
+        //targetConversation[0].id = e.target.placeholder;
         return e.target.value = '';
 
     }
@@ -80,27 +81,10 @@ class ConversationList extends React.Component {
         // mutating the array with a splice
         this.props.conversations.splice(index,1)
 
-        
         // using the index to splice
         // our conversation array
         this.setState({conversations: 
             this.props.conversations})
-
-    }
-
-     // toggles starred status
-    starToggler(conversation){
-        // filtering the copy, for the conversation
-        // we're trying to star
-        let targetConversation = this.props.conversations.filter(c => c.id === conversation);
-
-        if (targetConversation[0].star){
-            targetConversation[0].star = !targetConversation[0].star;
-        }
-        else {
-            targetConversation[0].star = true;
-        }
-        return this.setState({conversations: this.props.conversations})
     }
 
     // prevents clicks from
@@ -110,64 +94,56 @@ class ConversationList extends React.Component {
     }
 
     async buttonClick(e) {
-
         e.stopPropagation();
-    
         if (e.target.id ==="delete"){
             const fileName = e.target.parentElement.parentElement.firstChild.firstChild[0].placeholder;
-            
             const bodyObject = JSON.stringify({"file": fileName})
     
             // reflect deletion in frontend
             this.conversationDeleter(fileName)
-    
-            return await fetch('http://localhost:4000/conversations', {
+            return await fetch('https://ava-backend.herokuapp.com/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
             body: bodyObject,
             method: 'DELETE'
             })
-            
           }
     
         else if (e.target.id === "new"){
-    
-            const fileName = "NewConversation" + Date.now()
-            console.log(fileName)
+            const fileName = "NewConversation" + Date.now().toString().slice(10)
             this.setState({conversations: this.props.conversations.push({"id":fileName})})
-            
             const bodyObject = JSON.stringify({"file": fileName})
-            return await fetch('http://localhost:4000/conversations', {
-            headers: { 'Accept': 'application/json',
-            "Content-Type": 'application/json',
-            "Access-Control-Allow-Origin": "*"},
-            body: bodyObject,
-            method: 'POST'
+            await fetch('https://ava-backend.herokuapp.com/conversations', {
+                headers: { 'Accept': 'application/json',
+                "Content-Type": 'application/json',
+                "Access-Control-Allow-Origin": "*"},
+                body: bodyObject,
+                method: 'POST'
             })
+            this.setState({conversations: this.props.conversations})
         } 
     
         else {
             const conversationName = e.target.parentElement.parentElement.firstChild.firstChild[0].placeholder;
-            return this.starToggler(conversationName);
+            return this.props.starToggler(conversationName);
         }
     }
 
     rowClick(e){
-        
         const conversation = e.target.firstChild.firstChild.firstChild.placeholder
-
         return this.props.onRouteChange(conversation)
-        
+    }
+
+    openUp(e){
+        const conversation = e.target.parentElement.parentElement.firstChild.firstChild.firstChild.placeholder;
+        return this.props.onRouteChange(conversation);
     }
 
 
-
     render() {
-
         let conversations = this.props.conversations;
-        let star = ""
-
+        let star
         return (
             <div className = "container conv-list-container">
                 <div className = "row conv-list-ops-row">
@@ -179,20 +155,19 @@ class ConversationList extends React.Component {
                     </div>
                 </div>
                 <div className = "column conv-list-column">
-                    {conversations.map((conversation,i) => {
-                        if (conversation.star === true){
-                            star = "star-filled.svg";
-                        }
-                        else {
-                            star = "star.svg";
-                        }
+                    { conversations.map((conversation,i) => {
+                        if (localStorage.getItem(`${conversation.id}-star`)){
+                        star = localStorage.getItem(`${conversation.id}-star`)}
+                        else {star = "star.svg"}
                         return <div 
                         className = "row conv-list-row"
                         key = {`${i}`}
                         onClick = {(e) => this.rowClick(e)}>
-                        <div className = "column conv-title-column">
+                        <div className = "column conv-title-column"
+                        onClick = {(e) => {this.clickStopper(e)}}>
                             <form onSubmit = {this.handleSubmit}>
                                 <input
+                                aria-label = {`${conversation.id}-input`}
                                 id = "conversation-titles"
                                 maxLength = "30"
                                 placeholder = {`${conversation.id}`}
@@ -211,6 +186,10 @@ class ConversationList extends React.Component {
                             src = {`./assets/${star}`}
                             id = "star"
                             className = "star-button"/>
+                            <button 
+                            id = "open"
+                            onClick = {(e) => {this.openUp(e)}}
+                            className = "open-button">Open</button>
                             <button 
                             id = "delete"
                             onClick = {(e) => {this.buttonClick(e)}}

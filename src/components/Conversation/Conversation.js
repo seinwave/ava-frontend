@@ -3,17 +3,17 @@ import ReactDOM from 'react-dom'
 import * as StringBinding from 'sharedb-string-binding';
 import connection from '../Connection/Connection'
 
-
 // If needed, create a new Doc instance
 // for shareDB to communicate with
-function createIfNeeded(doc, callback){
-    if(!doc){
-      doc.create('', callback);
+function createIfNeeded(doc, data, callback){
+    if(doc.type === null){
+        console.log('File does not exist. Creating a blank.')
+        return doc.create('', callback);
     } else {
-      callback();
+        console.log('File exists. Populating with:', data)
+        callback();
     }
-  }
-
+}
 class Conversation extends React.Component {
     
     constructor(props) {
@@ -27,7 +27,7 @@ class Conversation extends React.Component {
     // server 
     async textEntered(text, conversation) {
         const bodyObject = JSON.stringify({"text":text, "file":conversation});
-        await fetch('http://localhost:4000/mutations', {
+        await fetch('https://ava-backend.herokuapp.com/mutations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
             "Access-Control-Allow-Origin": "*"},
@@ -37,83 +37,80 @@ class Conversation extends React.Component {
     
     }
 
-     // extracts most recent mutation
-  opHandler(op){
-    let lastMutation;
-    if (Object.keys(op[0]).includes('si')){
-        lastMutation = `INSERTION @ ${op[0].p}:  ${op[0].si}`
-        
-    }
-    else if (Object.keys(op[0]).includes('sd')){
-        lastMutation = `DELETION @ ${op[0].p}:  ${op[0].sd}`
+    // extracts most recent mutation
+    opHandler(op){
+        let lastMutation;
+        let targetConversation = this.props.conversations.filter(c => c.id === this.props.route);
+
+        if (Object.keys(op[0]).includes('si')){
+            lastMutation = `INSERTION @ ${op[0].p}:  ${op[0].si}`
+        }
+        else if (Object.keys(op[0]).includes('sd')){
+            lastMutation = `DELETION @ ${op[0].p}:  ${op[0].sd}`
+        }
+        this.setState({conversations: targetConversation[0].lastMutation = lastMutation })
+        const bodyObject = JSON.stringify({"mutation": lastMutation, "file": targetConversation[0].id})
+        fetch('https://ava-backend.herokuapp.com/mutations', {
+            headers: { 'Accept': 'application/json',
+            "Content-Type": 'application/json',
+            "Access-Control-Allow-Origin": "*"},
+            body: bodyObject,
+            method: 'PATCH'
+        })
     }
 
-
-    return this.setState({lastMutation: this.props.lastMutation.push(lastMutation)})
-}
 
     componentDidMount(){
         // Get a reference to the textArea DOM node.
         const textArea = ReactDOM.findDOMNode(this.textArea.current);
+        let targetConversation = this.props.conversations.filter(c => c.id === this.props.route);
+        let stringData = targetConversation[0].content;
 
         // Create local Doc instance, mapped
         // to the current conversation
         const collection = 'textPads';
-        const doc = connection.get(collection, this.props.route);
+        const doc = connection.get(collection, `${this.props.route}.json`);
 
-        let targetConversation = this.props.conversations.filter(c => c.id === this.props.route);
-        doc.data = targetConversation[0].content;
+        console.log('DOC:', doc);
+
+        connection.fetchSnapshot(collection, `${this.props.route}.json`, (err, snapshot) =>{
+            console.log('SNAPSHOT:', snapshot)
+        })
 
         // Getting operation details
         doc.on('op', (op) => {
             return this.opHandler(op);
         });
-
-        // this over-writes existing content...
-        // not sure why...
+        
+        // subscribe to the server's updates
+        // on the document
         doc.subscribe(function(err) {
             if (err) throw err;
-            createIfNeeded(doc, () => {
-            });
+            createIfNeeded(doc, stringData, () => {    
+            }); 
             const binding = new StringBinding(textArea, doc);
             binding.setup();
         });
-        this.doc = doc;
-        
-        
     }
 
-    starToggler(conversation){
-        // filtering the copy, for the conversation
-        // we're trying to star
-        let targetConversation = this.props.conversations.filter(c => c.id === conversation);
-
-        if (targetConversation[0].star){
-            targetConversation[0].star = !targetConversation[0].star;
-        }
-        else {
-            targetConversation[0].star = true;
-        }
-        return this.setState({conversations: this.props.conversations})
-    }
 
     starClick(e){
-       const conversation = e.target.parentElement.textContent;
-       this.starToggler(conversation)
+       const conversation = this.props.currentConversation.id;
+       this.props.starToggler(conversation)
     }
 
 
     handleInput(e) {
-        const conv = e.target.parentElement.parentElement.firstChild.firstChild.textContent
+        const conv = this.props.currentConversation.id
         this.textEntered(e.target.value, conv)
     }
 
     render() {
-
-        const { route, conversations } = this.props;
-        const currentConversation = conversations.filter(c => c.id === route);
-        const lastMutation = this.props.lastMutation[this.props.lastMutation.length-1];
-
+        const { currentConversation } = this.props;
+        const lastMutation = currentConversation[0].lastMutation;
+    
+        // latestMutation is green or red
+        // depending on what it is
         let spanStyle;
         if (lastMutation){
             if(lastMutation.includes('INSERTION')) {
@@ -123,12 +120,15 @@ class Conversation extends React.Component {
                 spanStyle =  '#fc845f';
             }
         }
+
+        // star is filled or not,
+        // depending on its status
         let star; 
-        if (currentConversation[0].star === true){
-            star = "star-filled.svg"
+        if (localStorage.getItem(`${currentConversation[0].id}-star`)){
+            star = localStorage.getItem(`${currentConversation[0].id}-star`)
         }
         else {star = "star.svg"}
-
+        
         return (
             <div className = "container conv-container">
                 <div className = "row conv-input-ops-row">
@@ -157,17 +157,13 @@ class Conversation extends React.Component {
                         </div>
                     </div>
                     <div className = "conv-border"></div>
-                    <div className = "row conv-operations-row">
-                        <button>undo</button>
-                    </div>
                     <div className = "row conv-row">
                         <textarea
                         ref = {this.textArea}
                         doc = {this.doc}
-                        defaultValue ={`${currentConversation[0].content}`}
+                        defaultValue = {currentConversation[0].content}
                         onBlur = {this.handleInput}
                         className = "conv-input" 
-                        placeholder = 'start typing...'
                         >
                         </textarea>
                     </div>

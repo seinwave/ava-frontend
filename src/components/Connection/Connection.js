@@ -1,12 +1,12 @@
 // This module exposes a singleton WebSocket connection to ShareDB server.
 import sharedb from 'sharedb/lib/client';
 
-// This line enables connecting to ShareDB within the React dev tooling.
-// Our ShareDB server started with `node server.js` runs on port 4000.
-// Our create-react-app dev server started with `npm start` runs on port 3000.
-// This line makes the WebSocket connection always use port 4000.
-const host = window.location.host.replace("3000", "4000");
+// Uncomment lines 5 & 6 for use with dev server
+// const host = window.location.host.replace("3000", "4000");
+// const webSocket = new WebSocket('ws://' + host);
 
-const webSocket = new WebSocket('ws://' + host);
+// Uncomment line 9 for use in deployment
+const webSocket = new WebSocket('wss://ava-backend.herokuapp.com/');
+
 const connection = new sharedb.Connection(webSocket);
 export default connection;

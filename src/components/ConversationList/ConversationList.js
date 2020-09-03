@@ -92,6 +92,8 @@ class ConversationList extends React.Component {
         e.stopPropagation();
     }
 
+   
+
     async buttonClick(e) {
         e.stopPropagation();
         if (e.target.id ==="delete"){
@@ -111,7 +113,9 @@ class ConversationList extends React.Component {
     
         else if (e.target.id === "new"){
             const fileName = "NewConversation" + Date.now().toString().slice(10)
-            this.setState({conversations: this.props.conversations.push({"id":fileName})})
+            const id = fileName;
+            
+            this.setState({conversations: this.props.conversations.push({"id": id, "fileName": `${fileName}.json`, "content": '', lastMutation: []})})
             const bodyObject = JSON.stringify({"file": fileName})
             await fetch('https://ava-backend.herokuapp.com/conversations', {
                 headers: { 'Accept': 'application/json',
@@ -120,7 +124,7 @@ class ConversationList extends React.Component {
                 body: bodyObject,
                 method: 'POST'
             })
-            this.setState({conversations: this.props.conversations})
+            return this.setState({conversations: this.props.conversations})
         } 
     
         else {

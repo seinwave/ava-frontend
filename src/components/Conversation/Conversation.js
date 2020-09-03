@@ -39,7 +39,6 @@ class Conversation extends React.Component {
     opHandler(op){
         let lastMutation;
         let targetConversation = this.props.conversations.filter(c => c.id === this.props.route);
-
         if (Object.keys(op[0]).includes('si')){
             lastMutation = `INSERTION @ ${op[0].p}:  ${op[0].si}`
         }
@@ -47,7 +46,7 @@ class Conversation extends React.Component {
             lastMutation = `DELETION @ ${op[0].p}:  ${op[0].sd}`
         }
         this.setState({conversations: targetConversation[0].lastMutation = lastMutation })
-        const bodyObject = JSON.stringify({"mutation": lastMutation, "file": targetConversation[0].id})
+        const bodyObject = JSON.stringify({"mutation": lastMutation, "file": targetConversation[0].fileName})
         fetch('https://ava-backend.herokuapp.com/mutations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
@@ -67,7 +66,7 @@ class Conversation extends React.Component {
         // Create local Doc instance, mapped
         // to the current conversation
         const collection = 'textPads';
-        const doc = connection.get(collection, `${this.props.route}.json`);
+        const doc = connection.get(collection, `${targetConversation[0].fileName}.json`);
 
         // Getting operation details
         doc.on('op', (op) => {
@@ -87,13 +86,13 @@ class Conversation extends React.Component {
 
 
     starClick(e){
-       const conversation = this.props.currentConversation.id;
+       const conversation = this.props.currentConversation[0].id;
        this.props.starToggler(conversation)
     }
 
 
     handleInput(e) {
-        const conv = this.props.currentConversation.id
+        const conv = this.props.currentConversation[0].fileName
         this.textEntered(e.target.value, conv)
     }
 

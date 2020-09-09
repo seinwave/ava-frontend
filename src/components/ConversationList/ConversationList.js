@@ -97,11 +97,14 @@ class ConversationList extends React.Component {
     async buttonClick(e) {
         e.stopPropagation();
         if (e.target.id ==="delete"){
-            const fileName = e.target.parentElement.parentElement.firstChild.firstChild[0].placeholder;
-            const bodyObject = JSON.stringify({"file": fileName})
-    
+            const displayName = e.target.parentElement.parentElement.firstChild.firstChild[0].placeholder;
+            let targetConversation = this.props.conversations.filter(c => c.id === displayName)
+            const bodyObject = JSON.stringify({"file": targetConversation[0].fileName})
+            
             // reflect deletion in frontend
-            this.conversationDeleter(fileName)
+            this.conversationDeleter(displayName)
+           
+            // delete it on the backend
             return await fetch('https://ava-backend.herokuapp.com/conversations', {
             headers: { 'Accept': 'application/json',
             "Content-Type": 'application/json',
@@ -115,7 +118,7 @@ class ConversationList extends React.Component {
             const fileName = "NewConversation" + Date.now().toString().slice(10)
             const id = fileName;
             
-            this.setState({conversations: this.props.conversations.push({"id": id, "fileName": `${fileName}.json`, "content": '', lastMutation: []})})
+            this.setState({conversations: this.props.conversations.push({"id": id, "fileName": `${fileName}.json`, "content": '', lastMutation: ''})})
             const bodyObject = JSON.stringify({"file": fileName})
             await fetch('https://ava-backend.herokuapp.com/conversations', {
                 headers: { 'Accept': 'application/json',

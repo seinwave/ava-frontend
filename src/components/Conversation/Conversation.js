@@ -7,7 +7,7 @@ import connection from "../Connection/Connection";
 // for shareDB to communicate with
 function createIfNeeded(doc, data, callback) {
   if (doc.type === null) {
-    return doc.create("", callback);
+    return doc.create(data, callback);
   } else {
     callback();
   }
@@ -76,7 +76,7 @@ class Conversation extends React.Component {
     const collection = "textPads";
     const doc = connection.get(
       collection,
-      `${targetConversation[0].fileName}.json`
+      `${targetConversation[0].fileName}`
     );
 
     // Getting operation details
